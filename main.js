@@ -1,28 +1,36 @@
+// main.js
 
-// Funkce pro převod čísla z binární soustavy do desítkové
-function binToDec(binaryString) {
-    // Kontrola platnosti vstupu
-    for (let i = 0; i < binaryString.length; i++) {
-        if (binaryString[i] !== '0' && binaryString[i] !== '1') {
-            return "Neplatný vstup - číslo není dvojkové";
+function permittedInputSystems() { return [2, 10, 16]; }
+function permittedOutputSystems() { return [2, 10, 16]; }
+
+function toDecimal(numberString, baseFrom) {
+    const digits = "0123456789ABCDEF";
+    let result = 0, power = 0;
+    for (let i = numberString.length - 1; i >= 0; i--) {
+        const digitValue = digits.indexOf(numberString[i].toUpperCase());
+        if (digitValue === -1 || digitValue >= baseFrom) {
+            throw new Error("Neplatný vstup: " + numberString);
         }
+        result += digitValue * Math.pow(baseFrom, power);
+        power++;
     }
-
-    let vysledek = 0;
-    let mocnina = 0;
-
-    // Procházíme číslicemi zprava doleva
-    for (let i = binaryString.length - 1; i >= 0; i--) {
-        let cislice = Number(binaryString[i]);
-        vysledek += cislice * Math.pow(2, mocnina);
-        mocnina++;
-    }
-
-    return vysledek;
+    return result;
 }
 
-// Test funkce
-console.log(binToDec("11011000111")); // Výstup: 1735
+function fromDecimal(number, baseTo) {
+    const digits = "0123456789ABCDEF";
+    if (number === 0) return "0";
+    let result = "";
+    while (number > 0) {
+        result = digits[number % baseTo] + result;
+        number = Math.floor(number / baseTo);
+    }
+    return result;
+}
 
-// Export pro automatické testy
-export { binToDec };
+function main(input, inputSystem, outputSystem) {
+    const decimal = toDecimal(input, inputSystem);
+    return fromDecimal(decimal, outputSystem);
+}
+
+export { main, permittedInputSystems, permittedOutputSystems };
